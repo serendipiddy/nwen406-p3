@@ -23,6 +23,8 @@ function rgbToVector(col) {
   return {'x':0,'y':0,'z':0};
 }
 
+var SCALE = 18.0;
+
 /* represents one view of a sphere */
 function toSphere(element) {
   var id = parseInt(element.getAttribute('id').match(new RegExp('\\d+')));
@@ -32,19 +34,19 @@ function toSphere(element) {
   var r = parseInt(element.getAttribute('r')); 
   var col = rgbToVector(element.style.fill); // TODO: parse this to vector
   
-  return new Sphere(id,x,y,0,r,col);
+  return new Sphere(id,x/SCALE,y/SCALE,0,r/SCALE,col);
 }
 
 function toZ(element) {
   var id = parseInt(element.getAttribute('id').match(new RegExp('\\d+')));
   var delta = element.getAttributeNS(null, "transform").slice(7,-1).split(' ');
   var y = parseInt(element.getAttribute('cy')) + parseInt(delta[5]);
-  return {'id':id,'z':y};
+  return {'id':id,'z': plane.point.z + y/SCALE}; // 
 }
 
 /* background for image */
 var plane = { 'type':'plane',
-      'point': {'x':0,'y':0,'z':-12},
+      'point': {'x':0,'y':0,'z':-10},
       'normal': {'x':0,'y':0,'z':1},
       'colour': {'x':255,'y':255,'z':255}
     };
@@ -68,6 +70,11 @@ function svgToJson() {
   console.log(renderData.objects.length);
 }
 
+function renderImange() {
+  svgToJson();
+  console.log(JSON.stringify(renderData.objects,null,2));
+  startCanvasRender();
+}
 
 /* sets the gamma correct value, then redraws image render */
 function setGamma() {

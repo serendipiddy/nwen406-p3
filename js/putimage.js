@@ -34,7 +34,8 @@ var drawPixels = function(canvas, pixels) {
 
 var renderData = {
   'section':[], 
-  'lightSource': {'x':-10,'y':0,'z':0},
+  'scale': 50.0,
+  'lightSource': {'x':-5,'y':0,'z':0},
   'cameraPos': {'x':0,'y':0,'z':40},
   'objects': [
     { 'type':'sphere',
@@ -43,7 +44,7 @@ var renderData = {
       'colour': {'x':0,'y':255,'z':0}
     },
     { 'type':'plane',
-      'point': {'x':0,'y':0,'z':-12},
+      'point': {'x':0,'y':0,'z':-100},
       'normal': {'x':0,'y':0,'z':1},
       'colour': {'x':255,'y':255,'z':255}
     }
@@ -182,9 +183,6 @@ function send(data, section) {
         success: function(res) {
             if (!res.error) {
               console.log('POST success');
-              // console.log(JSON.stringify(res));
-              // var c = getCanvas(9,9);
-              // drawPixels(c, res);
               updateImage(res);
             }
             else {
