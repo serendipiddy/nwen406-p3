@@ -211,6 +211,13 @@ function savePixelsReceived(filename) {
   saveAs(blob, filename)
 }
 
+/* Saves the current render data as a JSON file */
+function saveScene() {
+  var out = JSON.stringify(renderData,null,2);
+  var blob = new Blob([out], {type: "text/plain;charset=utf-8"});
+  saveAs(blob, 'scene.json')
+}
+
 /* Initiates a test of drawing squares to full the canvas */
 var offlineLoop = '';
 var testFullCanvas = function(canvas, wd, ht) {
