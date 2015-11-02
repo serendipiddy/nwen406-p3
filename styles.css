@@ -7,9 +7,15 @@ h1 {
   margin: 5px;
 }
 
+button {
+  padding: 5px;
+}
+
 .draggable {
   cursor: move;
 }
+
+
 
 #title {
   display: block;
@@ -34,8 +40,43 @@ h1 {
   border: 1px dashed #000;
 }
 
-#theimage {
+#content {
   float: left;
+  position: relative;
+  margin-left: 10px;
+  /* left: 250px; */
+  /* width: 100%; */
+}
+
+#theimage {
   border: 1px solid #000;
+  display: block;
+  position: relative;
+  /* width: 100%; */
+}
+
+#gammaDiv {
+  /* position: relative; */
+  /* left: 0px; */
+  /* top: 0px; */
+  /* width: 100%; */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#renderButton {
+  margin-left: 125px;
+  margin-rigth: auto;
+  width: 150px;
+  diplay: block;
+}
+
+#gammaSlider {
+  margin-left: 100px;
+  width: 200px;
+}
+
+#gammaTitle {
+  margin-left: 155px;
 }
 
