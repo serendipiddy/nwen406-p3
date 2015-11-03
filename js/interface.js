@@ -76,6 +76,11 @@ function renderImange() {
   startCanvasRender();
 }
 
+function renderJSON(json) {
+  renderData = json;
+  startCanvasRender();
+}
+
 /* sets the gamma correct value, then redraws image render */
 function setGamma() {
   GAMMA_CORRECTION = 1.0/parseFloat($('#gammaSlider').val());
