@@ -78,10 +78,10 @@ function renderImange() {
 
 /* sets the gamma correct value, then redraws image render */
 function setGamma() {
-  GAMMA_CORRECTION = 1/$('#gammaSlider').val();
+  GAMMA_CORRECTION = 1.0/parseFloat($('#gammaSlider').val());
   // redraw current image using this value
-  $('#gammaTitle').text(' Gamma '+GAMMA_CORRECTION.toFixed(2))
-  console.log(GAMMA_CORRECTION);
+  $('#gammaTitle').text(' Gamma '+$('#gammaSlider').val())
+  console.log(GAMMA_CORRECTION+" "+$('#gammaSlider').val())
 }
 
 function resizeCircle() {
