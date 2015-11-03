@@ -11,7 +11,12 @@ var getCanvas = function(wd,ht) {
 
 /* Perform gamma correction and impose maximum colour value of 255 */
 GAMMA_CORRECTION = 1.0/3.2 // was 2.2
+max = 255;
 var processPixel = function(color) {
+    if (color > max) {
+      max = color;
+      console.log(max);
+    }
     var col = Math.floor( Math.pow( color/255.0 , GAMMA_CORRECTION) * 255);
     // console.log(color+'->'+col);
     return col>255?255:col;
