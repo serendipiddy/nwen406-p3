@@ -1,3 +1,5 @@
+var LAMBDA_ENDPOINT = 'https://a98j1w4jae.execute-api.us-west-2.amazonaws.com/prod/q40iln';
+
 /** Create the canvas for rendering
  *    Build PNG pixel array
  *    Create DOM element to hold it
@@ -216,7 +218,6 @@ var sendCount = 1;
  */
 function send(data, section) {
     var id = sendCount++;
-    var path = 'https://a98j1w4jae.execute-api.us-west-2.amazonaws.com/prod/q40iln';
     var toSend = {
       'section':     section,
       'lightSource': data.lightSource,
@@ -226,7 +227,7 @@ function send(data, section) {
     // measure_latency.event_occured(id, 'seg_start');
     $.ajax({
         type: 'POST',
-        url: path,
+        url: LAMBDA_ENDPOINT,
         data: JSON.stringify(toSend),
         success: function(res) {
             if (!res.error) {
