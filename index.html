@@ -6,6 +6,7 @@
 <script src="js/jquery-1.11.3.min.js" charset="utf-8"></script>
 <script src="js/PNGlib.js" charset="utf-8"></script>
 <script src="js/FileSaver.min.js" charset="utf-8"></script>
+<!-- <script src="js/tests.js" charset="utf-8"></script> -->
 <script src="js/drawingboxes.js" charset="utf-8"></script>
 <script src="js/putimage.js" charset="utf-8"></script>
 <script src="js/interface.js" charset="utf-8"></script>
@@ -28,14 +29,26 @@
     <button id="remSphereButton" onclick='remCircle()'>
       Remove Sphere
     </button>
+    
     <button id="resizeButton" onclick='resizeCircle()'>
       Set Radius
     </button>
-    <input type='number' id='circle_size' value='25' />
+    <input type='number' id='circle_size' value='25' min='0' />
+    
     <button id="colourButton" onclick='colourCircle()'>
       Set Colour
     </button>
     <input type='text' id='circle_colour' maxlength='7' value='#800080' />
+    
+    <button id="randButton" onclick='loadAndRender()'>
+      Random
+    </button>
+    <input type='number' id='rand_num' min='0' max='50' value='4' />
+    
+    <button id="sizeButton" onclick='setSegSize()' style='clear: all;'>
+      Segment Size
+    </button>
+    <input type='number' id='seg_size' min='0' max='50' value='20' />
   </div>
 </div>
 <div id='content'>
@@ -44,8 +57,8 @@
     Render Image
   </button>
   <div id='gammaDiv'> 
-    <input id='gammaSlider' type='range' defaultValue='3.2' min='0' max='10' step='0.1' onclick='setGamma()'></input>
-    <h4 id='gammaTitle'> Gamma 3.2</h4>
+    <!-- <input id='gammaSlider' type='range' defaultValue='2.2' min='0' max='10' step='0.1' onclick='setGamma()'></input> -->
+    <h4 id='gammaTitle'> Gamma 2.2</h4>
   </div>
 </div>
 </body>

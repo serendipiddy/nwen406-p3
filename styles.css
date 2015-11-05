@@ -9,26 +9,31 @@ h1 {
 
 button {
   padding: 5px;
+  /* width: 70px; */
 }
 
 .draggable {
   cursor: move;
 }
 
+input {
+  width: 140px;
+}
 
 
 #title {
   display: block;
   text-align: center;
-  width: 100%;
+  width: 660px;
 }
 
 #drawingpanel {
   float: left;
   padding: 2px;
   width: 250px;
-  border: 1px solid #000;
+  /* border: 1px solid #000; */
   text-align: center;
+  /* background-color: #999999; */
 }
 
 #top_view, #front_view {
@@ -38,6 +43,7 @@ button {
   margin-left: 23px;
   /* margin-right: 23px; */
   border: 1px dashed #000;
+  background-color: white;
 }
 
 #content {

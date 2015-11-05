@@ -25,7 +25,7 @@ function rgbToVector(col) {
 
 var SCALE = 18.0;
 
-/* represents one view of a sphere */
+/* Represents one view of a sphere */
 function toSphere(element) {
   var id = parseInt(element.getAttribute('id').match(new RegExp('\\d+')));
   var delta = element.getAttributeNS(null, "transform").slice(7,-1).split(' ');
@@ -37,6 +37,9 @@ function toSphere(element) {
   return new Sphere(id,x/SCALE,y/SCALE,0,r/SCALE,col);
 }
 
+/* Pulls only the Z and ID information from the circle 
+ *   Used in conjunction with toSphere() to get the 3 coordinates of a sphere
+ */
 function toZ(element) {
   var id = parseInt(element.getAttribute('id').match(new RegExp('\\d+')));
   var delta = element.getAttributeNS(null, "transform").slice(7,-1).split(' ');
@@ -44,13 +47,14 @@ function toZ(element) {
   return {'id':id,'z': plane.point.z + y/SCALE}; // 
 }
 
-/* background for image */
+/* Background for image */
 var plane = { 'type':'plane',
       'point': {'x':0,'y':0,'z':-10},
       'normal': {'x':0,'y':0,'z':1},
       'colour': {'x':255,'y':255,'z':255}
     };
 
+/* Converts the user interface's SVG data into a render-able JSON object */
 function svgToJson() {
   renderData.objects = [plane];
   var spheres = {};
@@ -67,15 +71,23 @@ function svgToJson() {
     renderData.objects.push(spheres[top.id]);
   }
   
-  console.log(renderData.objects.length);
+  console.log('Rendering '+renderData.objects.length+' objects');
 }
 
+/* Starts render using SVG data from user interface */
 function renderImange() {
   svgToJson();
-  console.log(JSON.stringify(renderData.objects,null,2));
+  // console.log(JSON.stringify(renderData.objects,null,2));
   startCanvasRender();
 }
 
+function setSegSize() {
+  var size = $('#seg_size').val();
+  DIMENSIONS.div_x = size;
+  DIMENSIONS.div_y = size;
+}
+
+/* Starts render using a given JSON object */
 function renderJSON(json) {
   renderData = json;
   startCanvasRender();
@@ -102,4 +114,74 @@ function colourCircle() {
   col = col.match(/^#(?:[0-9a-f]{3}){1,2}$/i);
   if (!col) return;
   colCircle(col[0]);
+}
+
+/* loads a json of the given size, and initiates it's render */
+function loadAndRender() { 
+  var currentNums = $('#rand_num').val();
+  console.log('drawing random arrangement of '+currentNums+' spheres');
+  var data = getRenderObjects(currentNums); // the countdown
+  renderJSON(data);
+}
+
+/* returns the given number of objects in a scene json */
+function getRenderObjects(num) {
+  var data = jQuery.extend(true,{}, emptyObj);
+  
+  for (var i = 0; i < num; i++) {
+    var o = {
+      "id": i+1,
+      "type": "sphere",
+      "center": {
+        "x": Math.random()*10,
+        "y": Math.random()*10,
+        "z": -7.222222222222222
+      },
+      "radius": 1.3888888888888888,
+      "colour": {
+        "x": 128,
+        "y": 0,
+        "z": 128
+      }
+    };
+    
+    data.objects.push(o);
+  }
+  
+  return data;
+}
+
+var emptyObj = {
+  "section": [],
+  "scale": 50,
+  "lightSource": {
+    "x": -5,
+    "y": 0,
+    "z": 0
+  },
+  "cameraPos": {
+    "x": 0,
+    "y": 0,
+    "z": 40
+  },
+  "objects": [
+    {
+      "type": "plane",
+      "point": {
+        "x": 0,
+        "y": 0,
+        "z": -10
+      },
+      "normal": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      },
+      "colour": {
+        "x": 255,
+        "y": 255,
+        "z": 255
+      }
+    },
+  ]
 }

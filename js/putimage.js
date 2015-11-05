@@ -11,14 +11,15 @@ var getCanvas = function(wd,ht) {
 
 /* Perform gamma correction and impose maximum colour value of 255 */
 GAMMA_CORRECTION = 1.0/3.2 // was 2.2
-max = 0;
+max = 255;
 var processPixel = function(color) {
     if (color > max) {
       max = color;
       console.log(max);
     }
+    if (color < 0) console.log(color);
     var col = Math.floor( Math.pow( color/255.0 , GAMMA_CORRECTION) * 255);
-    console.log(color+'->'+col);
+    // console.log(color+'->'+col);
     return col>255?255:col;
 }
 
@@ -81,10 +82,11 @@ function startCanvasRender() {
   var s = getSections(DIMENSIONS.width, DIMENSIONS.height, DIMENSIONS.div_x, DIMENSIONS.div_y);
   
   /* remove some sections, used for testing */
-  // var limit = Math.floor(s.length * 0.4);
-  // for (var i = 0; i < limit; i++) s.shift(); // from front
-  // for (var i = 0; i < limit; i++) s.pop();   // from back
-  /* </remove> */
+  if (limitRenderSections) {
+    var limit = Math.floor(s.length * 0.4);
+    for (var i = 0; i < limit; i++) s.shift(); // from front
+    for (var i = 0; i < limit; i++) s.pop();   // from back
+  }
   
   sendingSections.sendSections(renderData,s);
 }
@@ -130,7 +132,32 @@ function getSections(wd,ht,size_x,size_y) {
     sections.push([done_x,done_y,extra_wd,extra_ht]);
   }
   
+  shuffle(sections);
   return sections;
+}
+
+/** Shuffle the elements of an array
+ *    http://stackoverflow.com/a/6274398
+ *    Fisher-Yates shuffle apparently
+ */
+function shuffle(array) {
+    var counter = array.length, temp, index;
+
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        index = Math.floor(Math.random() * counter);
+
+        // Decrease counter by 1
+        counter--;
+
+        // And swap the last element with it
+        temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+
+    return array;
 }
 
 /** Controls sending of the parallel sections of the image
@@ -139,41 +166,56 @@ function getSections(wd,ht,size_x,size_y) {
  *    Sending another section when one is received
  */
 var sendingSections = {
-  maxAtOnce: 10,
+  maxAtOnce: 20,
   currentNum: 0,
   missed: [],
   sections: [],
   data: '',
   sendSections: function(data, sections) {
+    // measure_latency.event_occured(this.maxAtOnce, 'numAtOnce');
+    // measure_latency.event_occured(sections.length, 'numSegments');
+    // measure_latency.event_occured(0, 'render_start');
+    this.numErrors = 0;
     this.data = jQuery.extend(true,{}, data);
     this.sections = sections;
-    while (this.currentNum<this.maxAtOnce) {
+    
+    // send the first batch of sections
+    while (this.currentNum<this.maxAtOnce && this.sections.length > 0) {
       send(this.data, this.sections.shift());
       this.currentNum++;
     }
   },
   responseReceived: function() {
-    if (this.sections.length>0) {
+    if (this.sections.length>0) { // get next section, if it exists
       send(this.data, this.sections.shift());
     }
-    else if (this.missed.length>0) { // any errors/timeouts, redo
+    else if (this.missed.length>0) { // redo any error/timeout segments
       send(this.data, this.missed.shift());
     }
-    else {
+    else { // drop window
       this.currentNum--;
+    }
+    if (this.currentNum == 0) { // all sent, so clean up
+      // measure_latency.event_occured(0, 'render_end');
+      // measure_latency.event_occured(this.numErrors, 'error_count');
+      // start_next_render();
+      console.log('complete');
     }
   },
   addSectionMissed: function(section) {
+    this.numErrors++;
     this.missed.push(section);
   }
 }
   
+var sendCount = 1;
 /** AJAX request for sending a section to be processed
  *    Configures CORS to allow this to be done
  *    Address of Lambda functions is hard-coded here
  *    Upon reply, updates the image displayed -- updateImage()
  */
 function send(data, section) {
+    var id = sendCount++;
     var path = 'https://a98j1w4jae.execute-api.us-west-2.amazonaws.com/prod/q40iln';
     var toSend = {
       'section':     section,
@@ -181,16 +223,19 @@ function send(data, section) {
       'cameraPos':   data.cameraPos,
       'objects':     data.objects,
     }
+    // measure_latency.event_occured(id, 'seg_start');
     $.ajax({
         type: 'POST',
         url: path,
         data: JSON.stringify(toSend),
         success: function(res) {
             if (!res.error) {
+              // measure_latency.event_occured(id, 'seg_end');
               console.log('POST success');
               updateImage(res);
             }
             else {
+              // measure_latency.event_occured(data.id, 'seg_end');
               console.log('POST error');
             }
         },
@@ -292,3 +337,5 @@ var testImage = {
     }
   ],
 }
+
+limitRenderSections = false;
